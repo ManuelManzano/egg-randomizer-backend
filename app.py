@@ -10,6 +10,12 @@ import base64
 app = Flask(__name__)
 CORS(app)
 
+# ✅ Health check route for Render to detect open port
+@app.route('/')
+def health_check():
+    return "Egg Randomizer Backend is Live!", 200
+
+# ✅ Load YOLO model
 model = YOLO("runs/detect/train10/weights/best.pt")
 TEST_IMAGE_DIR = "datasets/EggRandomizerDataset/test_images"
 
@@ -59,7 +65,8 @@ def generate_egg_seed():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ✅ ONLY ONE __main__ BLOCK!
+# ✅ Proper port handling for Render
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
+    print("Starting server on port:", port)
     app.run(host='0.0.0.0', port=port, debug=True)
